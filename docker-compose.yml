@@ -25,7 +25,7 @@ services:
     build: ./
     restart: on-failure
     ports:
-      - "8080:8080"
+      - "8080:8084"
     environment:
 
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/timeSheetDevOps?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
