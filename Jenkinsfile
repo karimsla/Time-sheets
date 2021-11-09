@@ -3,9 +3,9 @@ pipeline {
 
         registry = "karimslaimi/timesheet"
 
-        registryCredential = '145f13eb-0f8e-4e61-8090-4fd6d6e07258'
+        registryCredential = 'karimslaimi'
 
-        dockerImage = ''
+        dockerImage = 'timesheet'
 
 
     }
@@ -41,9 +41,9 @@ pipeline {
 
                     }
                      sh "docker rmi $registry:$BUILD_NUMBER"
-                     sh 'docker ps -f name=mypythonappContainer -q | xargs --no-run-if-empty docker container stop'
-                     sh 'docker container ls -a -fname=timesheet -q | xargs -r docker container rm'
-                     dockerImage.run("-p 8096:5000 --rm --name timesheet")
+                     sh 'docker ps -f name=timesheets -q | xargs --no-run-if-empty docker container stop'
+                     sh 'docker container ls -a -fname=timesheets -q | xargs -r docker container rm'
+                     dockerImage.run("-p 8080:8080 --rm --name timesheets")
                 }
 
         }
