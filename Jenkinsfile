@@ -1,13 +1,21 @@
 pipeline {
-  agent any
-  triggers {
-      githubPush()
+      environment {
+
+        registry = "karimslaimi/timesheet"
+
+        registryCredential = '145f13eb-0f8e-4e61-8090-4fd6d6e07258'
+
+        dockerImage = ''
+
+
     }
+  agent any
+
   stages {
     stage('Checkout GIT') {
       steps {
         echo "pulling";
-        git url: "https://github.com/karimsla/timesheet";
+        git url: "https://github.com/karimsla/Time-sheets";
       }
     }
     stage("Test, Build and sonar") {
@@ -19,6 +27,25 @@ pipeline {
     stage("deploy to nexus"){
         steps{
             bat "mvn clean package deploy:deploy-file -DgroupId=tn.esprit.spring -DartifactId=Timesheet-spring-boot-core-data-jpa-mvc-REST-1 -Dversion=2.3.12.RELEASE -DgeneratePom=true -Dpackaging=jar -DrepositoryId=deploymentRepo -Durl=http://localhost:8081/repository/maven-releases/ -Dfile=target/Timesheet-spring-boot-core-data-jpa-mvc-REST-1-2.3.12.RELEASE.jar"
+        }
+    }
+    stage("build and deploy to docker"){
+        steps{
+             script {
+
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+
+                    docker.withRegistry( '', registryCredential ) {
+
+                        dockerImage.push()
+
+                    }
+                     sh "docker rmi $registry:$BUILD_NUMBER"
+                     sh 'docker ps -f name=mypythonappContainer -q | xargs --no-run-if-empty docker container stop'
+                     sh 'docker container ls -a -fname=timesheet -q | xargs -r docker container rm'
+                     dockerImage.run("-p 8096:5000 --rm --name timesheet")
+                }
+
         }
     }
   }
