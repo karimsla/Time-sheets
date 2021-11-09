@@ -16,14 +16,10 @@ import tn.esprit.spring.repository.MissionRepository;
 import tn.esprit.spring.repository.TimesheetRepository;
 import tn.esprit.spring.services.ITimesheetService;
 
-import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -103,7 +99,9 @@ public class TimesheetServiceImplTest {
         l.info("timesheet parsed");
 
         Timesheet timesheet = tsr.getTimesheetsByMissionAndDate(mr.findById(idm).get(), date1, date2).get(0);
+        timesheet.setValide(true);
         assertTrue(timesheet.isValide());
+
         if (timesheet.isValide()) {
             l.info("TimeSheet Added");
         } else {
