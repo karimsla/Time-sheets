@@ -21,3 +21,18 @@ services:
     ports:
       - "3308:80"
 
+  timesheet:
+    container_name: timesheet
+    build: ./
+    restart: on-failure
+    ports:
+      - "8080:8084"
+    environment:
+
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/timeSheetDevOps?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      #- DEFAULT_PATH=<Target path in windows>
+    depends_on:
+      - mysql
+      - phpmyadmin
+
+
