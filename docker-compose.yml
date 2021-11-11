@@ -22,6 +22,7 @@ services:
       - "3308:80"
 
   timesheet:
+    image: karimslaimi/timesheet
     container_name: timesheet
     build: ./
     restart: on-failure
