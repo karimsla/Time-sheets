@@ -31,7 +31,9 @@ pipeline {
     }
     stage("build and deploy to docker"){
         steps{
+
              script {
+
 
                     dockerImage = docker.build registry + ":$BUILD_NUMBER"
 
@@ -40,10 +42,15 @@ pipeline {
                         dockerImage.push()
 
                     }
-                     sh "docker rmi $registry:$BUILD_NUMBER"
-                     sh 'docker ps -f name=timesheets -q | xargs --no-run-if-empty docker container stop'
-                     sh 'docker container ls -a -fname=timesheets -q | xargs -r docker container rm'
-                     dockerImage.run("-p 8080:8080 --rm --name timesheets")
+
+
+
+                     bat "docker-compose build timesheet"
+                     bat "docker tag karimslaimi/timesheet:latest karimslaimi/timesheet:$BUILD_NUMBER"
+                     bat "docker-compose push timesheet"
+
+                     bat " docker-compose up --build -d --force-recreate"
+
                 }
 
         }
