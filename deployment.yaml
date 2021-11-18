@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timesheet-deployment
+  labels:
+    app: timesheet
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: timesheet
+  template:
+    metadata:
+      labels:
+        app: timesheet
+    spec:
+      containers:
+        - name: timesheet
+          image: karimslaimi/timesheet:40
+          ports:
+            - containerPort: 8080
+              #kubectl port-forward <pod-name> <locahost-port>:<pod-port>
