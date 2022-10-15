@@ -1,0 +1,73 @@
+version: '3.3'
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    command: mysqld --default-authentication-plugin=mysql_native_password
+    #    platform: linux/amd64 # uncomment this if using Apple silicon
+    hostname: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: iPayiTransfer1
+
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    links:
+      - mysql:db
+    ports:
+      - "3308:80"
+    networks:
+      - app-network
+  backend:
+    image: zouaghiamal/ipayitransfer
+    container_name: ipayitransfer
+    build: ./
+    restart: on-failure
+    ports:
+      - "8082:8082"
+    networks:
+      - app-network
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=iPayiTransfer1
+      - MYSQL_PORT=3306
+
+      #- DEFAULT_PATH=<Target path in windows>
+    depends_on:
+      - mysql
+      - phpmyadmin
+  admin:
+    image: zouaghiamal/admin-mag-transfert
+    container_name: front-admin
+    build: ./
+    restart: on-failure
+    ports:
+      - "4200:4200"
+
+    depends_on:
+      - backend
+
+  client:
+    image: zouaghiamal/mag-transfert
+    container_name: front-client
+    build: ./
+    restart: on-failure
+    ports:
+      - "4300:4300"
+
+    depends_on:
+      - backend
+
+networks:
+  app-network:
+    name: app-network
